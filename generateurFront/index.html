@@ -1,0 +1,318 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Générateur note de frais</title>
+    <link rel="stylesheet" href="app.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  </head>
+  <body>
+    <form class="form" action="#" method="POST">
+      <div class="form-header">
+        <h2>Créer une note de frais</h2>
+        <p>Veuillez remplir les informations ci-dessous</p>
+      </div>
+
+      <div id="formulaire" class="form-grid">
+        <div class="form-group">
+          <label for="inputNom"
+            >Nom du demandeur <span class="red-text">*</span></label
+          >
+          <input type="text" id="inputNom" required />
+        </div>
+
+        <div class="form-group">
+          <label for="inputDate"
+            >Date de la demande <span class="red-text">*</span></label
+          >
+          <input type="date" id="inputDate" required />
+        </div>
+
+        <div class="form-group">
+          <label for="inputMail"
+            >Mail du demandeur <span class="red-text">*</span></label
+          >
+          <input type="email" id="inputMail" required />
+        </div>
+
+        <div class="form-group">
+          <label for="inputRaison"
+            >Raison de la dépense <span class="red-text">*</span></label
+          >
+          <input type="text" id="inputRaison" required />
+        </div>
+
+        <div class="form-group">
+          <label for="selectBudget"
+            >Budget <span class="red-text">*</span></label
+          >
+          <select name="budget" id="selectBudget">
+            <option value="formation">Formation</option>
+            <option value="administratif">Administratif</option>
+            <option value="bibliothèque">Bibliothèque</option>
+            <option value="matos">Matos Explo / spéléo / canyon</option>
+            <option value="matosAutre">Matos autre</option>
+            <option value="weekend">Week-ends et sorties</option>
+          </select>
+        </div>
+
+        <div id="kmForm">
+          <div class="form-group">
+            <h3>Frais Kilométriques & Totaux</h3>
+          </div>
+
+          <div class="form-group">
+            <label for="selectVehicule"
+              >Véhicule utilisé (Barème kilométrique)</label
+            >
+            <select id="selectVehicule">
+              <optgroup label="Note de frais">
+                <option value="0.360">
+                  Voiture - conducteur seul (0,360 €/km)
+                </option>
+                <option value="0.400">
+                  Voiture - covoiturage/matériel (0,400 €/km)
+                </option>
+                <option value="0.140">Moto >= 125cc (0,140 €/km)</option>
+              </optgroup>
+              <optgroup label="Abandon de frais">
+                <option value="0.529">
+                  Voiture 3 CV et moins (0,529 €/km)
+                </option>
+                <option value="0.606">Voiture 4 CV (0,606 €/km)</option>
+                <option value="0.636">Voiture 5 CV (0,636 €/km)</option>
+                <option value="0.665">Voiture 6 CV (0,665 €/km)</option>
+                <option value="0.697">Voiture 7 CV et plus (0,697 €/km)</option>
+                <option value="0.395">Moto 1 & 2 CV (0,395 €/km)</option>
+                <option value="0.468">Moto 3, 4 et 5 CV (0,468 €/km)</option>
+                <option value="0.606">Moto 6 CV et plus (0,606 €/km)</option>
+              </optgroup>
+            </select>
+          </div>
+
+          <div id="zone-banque">
+            <div class="form-group">
+              <label for="inputIban"
+                >IBAN <span class="red-text">*</span></label
+              >
+              <input
+                type="text"
+                id="inputIban"
+                placeholder="FR76 1234..."
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label for="inputBic">BIC <span class="red-text">*</span></label>
+              <input type="text" id="inputBic" required />
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="displayTotalKm">Total Km</label>
+            <input type="text" id="displayTotalKm" value="0" readonly />
+          </div>
+
+          <div class="form-group">
+            <label for="inputMontant">Montant Total Global</label>
+            <div class="input-with-symbol">
+              <input
+                type="text"
+                id="inputMontant"
+                class="red-text"
+                value="0.00"
+                readonly
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="individual-expense">
+        <h3>Détail de la dépense</h3>
+
+        <div id="expenses-container">
+          <div class="expense-row">
+            <div class="expense-main">
+              <div class="form-group">
+                <label for="expDate1"
+                  >Date <span class="red-text">*</span></label
+                >
+                <input type="date" id="expDate1" required />
+              </div>
+              <div class="form-group">
+                <label for="expObjet1"
+                  >Objet de la dépense <span class="red-text">*</span></label
+                >
+                <input type="text" id="expObjet1" />
+              </div>
+              <div class="form-group">
+                <label for="expKm1"
+                  >Km effectués <span class="red-text">*</span></label
+                >
+                <input
+                  type="number"
+                  id="expKm1"
+                  step="1"
+                  min="0"
+                  value="0"
+                  required
+                />
+              </div>
+            </div>
+            <div class="expense-details">
+              <div class="form-group">
+                <label for="expPeage1"
+                  >Péages, transports <span class="red-text">*</span></label
+                >
+                <input
+                  type="number"
+                  id="expPeage1"
+                  step="0.01"
+                  min="0"
+                  value="0"
+                  required
+                />
+              </div>
+              <div class="form-group">
+                <label for="expAutre1"
+                  >Autres <span class="red-text">*</span></label
+                >
+                <input
+                  type="number"
+                  id="expAutre1"
+                  step="0.01"
+                  min="0"
+                  value="0"
+                  required
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <button type="button" id="add-expense-button" class="button small">
+          + Ajouter une ligne
+        </button>
+        <button type="button" id="delete-expense-button" class="button small">
+          - Supprimer une ligne
+        </button>
+      </div>
+
+      <div id="ticket" class="form-group">
+        <label for="input-file" class="file-label">
+          <h3>
+            Ajouter un ou des ticket(s) de caisse
+            <span class="red-text">*</span>
+          </h3>
+          <input
+            type="file"
+            accept="image/*"
+            id="input-file"
+            multiple
+            required
+          />
+        </label>
+      </div>
+
+      <div class="signature-section">
+        <div class="flex-between">
+          <h3>Signature</h3>
+          <a href="#" class="clear-button">Tout effacer</a>
+        </div>
+        <canvas class="signature-pad" width="460" height="150"></canvas>
+      </div>
+
+      <div class="validation-section">
+        <div class="form-group">
+          <label>
+            <input type="checkbox" id="checkbox-email" />
+            Envoyer une copie PDF par mail
+          </label>
+        </div>
+
+        <button class="button" id="submit-button" type="submit">
+          Valider la note de frais
+        </button>
+      </div>
+    </form>
+
+    <div id="pdf">
+      <div id="zone-pdf">
+        <h1 id="titrePDF"></h1>
+        <hr />
+        <p><strong>Nom du demandeur :</strong> <span id="pdfNom"></span></p>
+        <p><strong>Mail du demandeur :</strong> <span id="pdfMail"></span></p>
+        <p><strong>Date de la demande :</strong> <span id="pdfDate"></span></p>
+        <p>
+          <strong>Raison de la dépense :</strong> <span id="pdfRaison"></span>
+        </p>
+        <p><strong>Budget :</strong> <span id="pdfBudget"></span></p>
+        <p id="pdfLigneBanque">
+          <strong>IBAN :</strong> <span id="pdfIban"></span> -
+          <strong>BIC :</strong> <span id="pdfBic"></span>
+        </p>
+        <p>
+          <strong id="texteRemboursement"></strong>
+          <span id="pdfMontant"></span>
+        </p>
+        <table class="pdf-table">
+          <thead>
+            <tr>
+              <th>Date<br /><small>de la dépense</small></th>
+              <th>Objet de la dépense</th>
+              <th>Km<br /><small>effectués</small></th>
+              <th>Péages, autres<br />transports</th>
+              <th>Autres</th>
+            </tr>
+          </thead>
+          <tbody id="pdf-table-body">
+            <tr>
+              <td id="pdfExpDate1"></td>
+              <td id="pdfExpObjet1"></td>
+              <td id="pdfExpKm1"></td>
+              <td id="pdfExpPeage1"></td>
+              <td id="pdfExpAutre1"></td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <tr>
+              <td colspan="2">Total km :</td>
+              <td id="pdfTotalKm">0</td>
+              <td colspan="2"></td>
+            </tr>
+            <tr>
+              <td colspan="2">Barème kilométrique :</td>
+              <td id="pdfBareme">0,00 €/km</td>
+              <td colspan="2"></td>
+            </tr>
+            <tr>
+              <td colspan="2">Totaux par catégorie :</td>
+              <td id="pdfTotalPrixKm">0,00 €</td>
+              <td id="pdfTotalPeage">0,00 €</td>
+              <td id="pdfTotalAutre">0,00 €</td>
+            </tr>
+            <tr>
+              <td colspan="2">Total :</td>
+              <td colspan="3" id="pdfTotal">0.00 €</td>
+            </tr>
+            <tr id="ligne-deduction">
+              <td colspan="2">Coût réel après déduction d'impôts :</td>
+              <td colspan="3" id="pdfApresDeduction">0.00 €</td>
+            </tr>
+          </tfoot>
+        </table>
+        <div id="zone-signature">
+          <p><strong>Signature :</strong></p>
+          <div id="pdfSignature"></div>
+        </div>
+        <div id="zone-ticket-pdf">
+          <p><strong>Ticket(s) de caisse :</strong></p>
+          <div id="ticketImage"></div>
+        </div>
+      </div>
+    </div>
+    <script src="app.js"></script>
+  </body>
+</html>

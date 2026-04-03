@@ -37,7 +37,6 @@ public class NoteDeFraisResource {
         nouvelleDemande.budget = donnees.budget;
         nouvelleDemande.montant = donnees.montant;
         nouvelleDemande.dateDemande = donnees.dateDemande;
-        nouvelleDemande.pdfBase64 = donnees.pdfBase64;
         nouvelleDemande.user = user;
         nouvelleDemande.typeDeFrais = donnees.typeDeFrais;
         nouvelleDemande.iban = donnees.iban;

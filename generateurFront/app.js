@@ -44,14 +44,14 @@ function calculerTotaux() {
 
   displayTotalKm.innerText = totalKm.toFixed(2) + " km";
   displayTotalKm.value = totalKm.toFixed(2) + " km";
-  inputMontant.value = total.toFixed(2) + " €";
+  inputMontant.value = total.toFixed(3) + " €";
 
   document.getElementById("pdfTotalKm").innerText = totalKm.toFixed(2) + " km";
-  document.getElementById("pdfBareme").innerText = bareme.toFixed(2) + " €/km";
-  document.getElementById("pdfTotalPrixKm").innerText = totalPrixKm.toFixed(2) + " €";
-  document.getElementById("pdfTotalPeage").innerText = totalPeage.toFixed(2) + " €";
-  document.getElementById("pdfTotalAutre").innerText = totalAutre.toFixed(2) + " €";
-  document.getElementById("pdfTotal").innerText = total.toFixed(2) + " €";
+  document.getElementById("pdfBareme").innerText = bareme.toFixed(3) + " €/km";
+  document.getElementById("pdfTotalPrixKm").innerText = totalPrixKm.toFixed(3) + " €";
+  document.getElementById("pdfTotalPeage").innerText = totalPeage.toFixed(3) + " €";
+  document.getElementById("pdfTotalAutre").innerText = totalAutre.toFixed(3) + " €";
+  document.getElementById("pdfTotal").innerText = total.toFixed(3) + " €";
 
   const optionSelectionnee = selectVehicule.options[selectVehicule.selectedIndex];
   const categorie = optionSelectionnee.parentElement.label;
@@ -65,7 +65,7 @@ function calculerTotaux() {
   if (categorie == "Abandon de frais") {
     ligneDeduction.style.display = "table-row";
     const apresDeduction = total * 0.34;
-    pdfApresDeduction.innerText = apresDeduction.toFixed(2) + " €";
+    pdfApresDeduction.innerText = apresDeduction.toFixed(3) + " €";
 
     zoneBanque.style.display = "none";
     inputIban.required = false;

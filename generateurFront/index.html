@@ -106,7 +106,7 @@
             </div>
             <div class="form-group">
               <label for="inputBic">BIC <span class="red-text">*</span></label>
-              <input type="text" id="inputBic" required />
+              <input type="text" id="inputBic" placeholder="BNP..." required />
             </div>
           </div>
           <div class="form-group">
@@ -203,7 +203,7 @@
       <div id="ticket" class="form-group">
         <label for="input-file" class="file-label">
           <h3>
-            Ajouter un ou des ticket(s) de caisse
+            Ajouter un ou des justificatifs
             <span class="red-text">*</span>
           </h3>
           <input
@@ -219,7 +219,9 @@
       <div class="signature-section">
         <div class="flex-between">
           <h3>Signature</h3>
-          <a href="#" class="clear-button">Tout effacer</a>
+          <button class="small button" id="clear-sign-button">
+            Effacer la signature
+          </button>
         </div>
         <canvas class="signature-pad" width="460" height="150"></canvas>
       </div>
@@ -235,6 +237,7 @@
         <button class="button" id="submit-button" type="submit">
           Valider la note de frais
         </button>
+        <button class="button" id="clear-button">Tout effacer</button>
       </div>
     </form>
 
@@ -308,7 +311,7 @@
           <div id="pdfSignature"></div>
         </div>
         <div id="zone-ticket-pdf">
-          <p><strong>Ticket(s) de caisse :</strong></p>
+          <p><strong>Justificatifs :</strong></p>
           <div id="ticketImage"></div>
         </div>
       </div>

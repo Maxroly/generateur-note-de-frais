@@ -42,8 +42,8 @@ function calculerTotaux() {
   const totalPrixKm = totalKm * bareme;
   const total = totalPrixKm + totalPeage + totalAutre;
 
-  displayTotalKm.innerText = totalKm + " km";
-  displayTotalKm.value = totalKm + " km";
+  displayTotalKm.innerText = totalKm.toFixed(2) + " km";
+  displayTotalKm.value = totalKm.toFixed(2) + " km";
   inputMontant.value = total.toFixed(2) + " €";
 
   document.getElementById("pdfTotalKm").innerText = totalKm.toFixed(2) + " km";
@@ -83,8 +83,8 @@ calculerTotaux();
 
 const canvas = document.querySelector('canvas');
 const form = document.querySelector('.form');
-const clearButton = document.querySelector('.clear-button');
-
+const clearButton = document.getElementById('clear-button');
+const clearSignButton = document.getElementById('clear-sign-button')
 const ctx = canvas.getContext('2d');
 
 let writingMode = false;
@@ -119,6 +119,11 @@ const getCursorPosition = (event) => {
 
 ctx.lineWidth = 3;
 ctx.lineJoin = ctx.lineCap = 'round';
+
+clearSignButton.addEventListener('click', (event) => {
+  event.preventDefault();
+  clearPad();
+});
 
 const imageURL = canvas.toDataURL();
 const image = document.createElement('img');
@@ -296,8 +301,8 @@ function preparerPdf() {
 const submitButton = document.getElementById('submit-button');
 const checkboxEmail = document.getElementById('checkbox-email');
 
-form.addEventListener('submit', (e) => {
-    e.preventDefault();
+form.addEventListener('submit', (event) => {
+    event.preventDefault();
     submitButton.innerText = "Traitement en cours...";
     submitButton.disabled = true;
     checkboxEmail.disabled = true;

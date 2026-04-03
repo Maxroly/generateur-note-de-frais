@@ -49,12 +49,26 @@ public class NoteDeFraisResource {
             String pdfDecoded = pdfBase64.substring(pdfBase64.indexOf(",") + 1);
             byte[] pdfByte = Base64.getDecoder().decode(pdfDecoded);
 
-            mailer.send(
-                    Mail.withText(user.mail,
-                            "Demande de note de frais",
-                            "Bonjour " + user.nom + ",\n\nVoici ci joint votre note de frais d'un montant de "
-                                    + nouvelleDemande.montant + "€ concernant votre " + nouvelleDemande.raison + ".")
-                            .addAttachment("Note de Frais " + user.nom + ".pdf", pdfByte, "application/pdf"));
+            if (nouvelleDemande.typeDeFrais == "Remboursement") {
+                mailer.send(
+                        Mail.withText(user.mail,
+                                "Demande de note de frais",
+                                "Bonjour " + user.nom + ",\n\nVoici ci joint votre note de frais d'un montant de "
+                                        + nouvelleDemande.montant + " € concernant votre " + nouvelleDemande.raison
+                                        + "."
+                                        + "\n\nBonne journée.")
+                                .addAttachment("Note de Frais " + user.nom + ".pdf", pdfByte, "application/pdf"));
+            } else {
+                mailer.send(
+                        Mail.withText(user.mail,
+                                "Justificatif de votre abandon de frais",
+                                "Bonjour " + user.nom
+                                        + ",\n\nVoici ci joint votre récapitulatif de votre abandon de frais d'un montant de "
+                                        + nouvelleDemande.montant + " € concernant votre " + nouvelleDemande.raison
+                                        + "."
+                                        + "\n\nBonne journée.")
+                                .addAttachment("Note de Frais " + user.nom + ".pdf", pdfByte, "application/pdf"));
+            }
         }
 
         return "Succès : Note de frais de " + donnees.montant + "€ enregistrée pour " + user.nom;

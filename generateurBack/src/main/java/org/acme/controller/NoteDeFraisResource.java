@@ -6,6 +6,7 @@ import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 
 import java.util.Base64;
+import java.util.concurrent.CompletableFuture;
 
 import org.acme.dto.NoteDeFraisDTO;
 import org.acme.entity.NoteDeFrais;
@@ -45,30 +46,46 @@ public class NoteDeFraisResource {
         nouvelleDemande.persist();
 
         if (donnees.envoyerMail == true) {
-            String pdfBase64 = nouvelleDemande.pdfBase64;
-            String pdfDecoded = pdfBase64.substring(pdfBase64.indexOf(",") + 1);
-            byte[] pdfByte = Base64.getDecoder().decode(pdfDecoded);
+            String mailDestinataire = donnees.mail;
+            String nomDestinataire = donnees.nom;
+            String pdfBase64 = donnees.pdfBase64;
+            String typeDeFrais = donnees.typeDeFrais;
+            float montant = donnees.montant;
+            String raison = donnees.raison;
 
-            if (nouvelleDemande.typeDeFrais == "Remboursement") {
-                mailer.send(
-                        Mail.withText(user.mail,
-                                "Demande de note de frais",
-                                "Bonjour " + user.nom + ",\n\nVoici ci joint votre note de frais d'un montant de "
-                                        + nouvelleDemande.montant + " € concernant votre " + nouvelleDemande.raison
-                                        + "."
-                                        + "\n\nBonne journée.")
-                                .addAttachment("Note de Frais " + user.nom + ".pdf", pdfByte, "application/pdf"));
-            } else {
-                mailer.send(
-                        Mail.withText(user.mail,
-                                "Justificatif de votre abandon de frais",
-                                "Bonjour " + user.nom
-                                        + ",\n\nVoici ci joint votre récapitulatif de votre abandon de frais d'un montant de "
-                                        + nouvelleDemande.montant + " € concernant votre " + nouvelleDemande.raison
-                                        + "."
-                                        + "\n\nBonne journée.")
-                                .addAttachment("Note de Frais " + user.nom + ".pdf", pdfByte, "application/pdf"));
-            }
+            CompletableFuture.runAsync(() -> {
+                try {
+                    String pdfDecoded = pdfBase64.substring(pdfBase64.indexOf(",") + 1);
+                    byte[] pdfByte = Base64.getDecoder().decode(pdfDecoded);
+
+                    if ("Remboursement".equals(typeDeFrais)) {
+                        mailer.send(
+                                Mail.withText(mailDestinataire,
+                                        "Demande de note de frais",
+                                        "Bonjour " + nomDestinataire
+                                                + ",\n\nVoici ci joint votre note de frais d'un montant de "
+                                                + montant + " € concernant votre " + raison
+                                                + "."
+                                                + "\n\nBonne journée.")
+                                        .addAttachment("Note_de_Frais_" + nomDestinataire + ".pdf", pdfByte,
+                                                "application/pdf"));
+                    } else {
+                        mailer.send(
+                                Mail.withText(mailDestinataire,
+                                        "Justificatif de votre abandon de frais",
+                                        "Bonjour " + nomDestinataire
+                                                + ",\n\nVoici ci joint votre récapitulatif de votre abandon de frais d'un montant de "
+                                                + montant + " € concernant votre " + raison
+                                                + "."
+                                                + "\n\nBonne journée.")
+                                        .addAttachment("Abandon_de_Frais_" + nomDestinataire + ".pdf", pdfByte,
+                                                "application/pdf"));
+                    }
+                    System.out.println("Mail envoyé avec succès en tâche de fond à " + mailDestinataire);
+                } catch (Exception e) {
+                    System.err.println("Erreur lors de l'envoi du mail asynchrone : " + e.getMessage());
+                }
+            });
         }
 
         return "Succès : Note de frais de " + donnees.montant + "€ enregistrée pour " + user.nom;
